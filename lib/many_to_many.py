@@ -24,6 +24,9 @@ class Author:
     def sign_contract(self, book, date, royalties):
         return Contract(self, book, date, royalties)
 
+    def total_royalties(self):
+        return sum(contract.royalties for contract in self.contracts())
+
 
 class Book:
     all = []
@@ -59,8 +62,8 @@ class Contract:
             raise ValueError("book must be an instance of Book")
         if not isinstance(date, str) or not date.strip():
             raise ValueError("date must be a non-empty string")
-        if not isinstance(royalties, int) or royalties < 0 or royalties > 100:
-            raise ValueError("royalties must be an integer between 0 and 100")
+        if not isinstance(royalties, (int, float)):
+            raise ValueError("royalties must be a number")
 
         self._author = author
         self._book = book
