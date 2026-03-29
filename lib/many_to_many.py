@@ -1,46 +1,3 @@
-class Author:
-    all = []
-
-    def __init__(self, name):
-        if not isinstance(name, str) or len(name.strip()) == 0:
-            raise ValueError("name must be a non-empty string")
-        self._name = name
-        Author.all.append(self)
-
-    @property
-    def name(self):
-        return self._name
-
-    def contracts(self):
-        return [contract for contract in Contract.all if contract.author == self]
-
-    def books(self):
-        return list({contract.book for contract in self.contracts()})
-
-    def sign_contract(self, book, date, royalties):
-        return Contract(self, book, date, royalties)
-
-
-class Book:
-    all = []
-
-    def __init__(self, title):
-        if not isinstance(title, str) or len(title.strip()) == 0:
-            raise ValueError("title must be a non-empty string")
-        self._title = title
-        Book.all.append(self)
-
-    @property
-    def title(self):
-        return self._title
-
-    def contracts(self):
-        return [contract for contract in Contract.all if contract.book == self]
-
-    def authors(self):
-        return list({contract.author for contract in self.contracts()})
-
-
 class Contract:
     all = []
 
@@ -75,3 +32,8 @@ class Contract:
     @property
     def royalties(self):
         return self._royalties
+
+    # 👇 ADD THIS METHOD
+    @classmethod
+    def contracts_by_date(cls, date):
+        return [contract for contract in cls.all if contract.date == date]
