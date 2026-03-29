@@ -1,116 +1,173 @@
-# Many-to-many Object Relationships Lab
+# Many-to-Many Relationship Lab: Authors, Books, and Contracts
 
-Now that we have learned about several types of relationships it's time to build 
-one of our own. In this lab you will be creating a many-to many relationship in 
-python 
+## Overview
 
-## The Scenario 
+In this lab, we implement a **many-to-many relationship** in Python using object-oriented programming (OOP).
 
-We are tasked with building a model to aid in building contracts for books with 
-multiple authors. As a part of this model we need to create an Author model, a Book 
-model and a Contract model. Authors can have many books through contracts, and books 
-can have many authors through contacts.
+The system models how **authors collaborate on books through contracts**:
 
-## Tools & Resources 
-- [Github Repo](https://github.com/learn-co-curriculum/python-oo-many-to-many-book-contracts-lab)
-- [Python classes](https://docs.python.org/3/tutorial/classes.html)
+* An **Author** can have many **Books**
+* A **Book** can have many **Authors**
+* The relationship is managed through a **Contract**
 
-## Instructions
+This mimics real-world publishing scenarios where multiple authors contribute to multiple books.
 
-### Task 1: Define the Problem
+---
 
-Build a model a many to many relationship between Books and Authors:
+## Project Structure
 
-* Build Book class
-* Build Author class
-* Build Contract class
-* Build connecting methods between all
+```
+python-oo-many-to-many/
+│
+├── lib/
+│   └── many_to_many.py
+│
+├── testing/
+│   ├── conftest.py
+│   └── test_many_to_many.py
+│
+├── Pipfile
+├── Pipfile.lock
+├── pytest.ini
+└── README.md
+```
 
-### Task 2: Determine the Design
+---
 
-#### Book:
-* Attributes:
-  * title (string)
-  * all (array) 
-* Methods:
-  * contracts()
-  * authors()
+## Setup Instructions
 
-#### Authors:
-* Attributes:
-  * name (string)
-  * all (array)
-* Methods:
-  * contracts()
-  * books()
-  * sign_contracts(book,date,royalties)
-  * total_royalties()
+### 1. Install dependencies
 
-#### Contracts:
-* Attributes:
-  * author (Author class), 
-  * book (Book class), 
-  * date (string), 
-  * royalties (integer)
-  * all (array)
-* Methods:
-  * contracts_by_date()
+If you're using pipenv:
 
-### Task 3: Develop, Test, and Refine the Code
+```bash
+pipenv install
+```
 
-#### Step 1: Create feature branch
+### 2. Activate virtual environment
 
-#### Step 2: Create Book class
+```bash
+pipenv shell
+```
 
-* `__init__`: title
-* Class attributes- all
-* Methods:
-  * contracts()- This method should return a list of related contracts
-  * authors()- This method should return a list of related authors using the Contract class as an intermediary
+---
 
-#### Step 3: Authors
+## Running Tests
 
-* `__init__`: name (string)
-* Class attributes- all
-* Methods:
-  * contracts()- This method should return a list of related contracts
-  * books()- This method should return a list of related books using the Contract class as an intermediary
-  * sign_contracts(book,date,royalties)- This method should create and return a new Contract object between the author and the specified book with the specified date and royalties
-  * total_royalties()- This method should return the total amount of royalties that the author has earned from all of their contracts
+To verify your implementation:
 
-#### Step 4: Contracts
+```bash
+pytest
+```
 
-* `__init__`:
-  * author
-  * book
-  * date 
-  * royalties 
-* Class attributes: all
-* Properties: All properties should raise an exception if not valid
-  * author: Is an instance of Author class
-  * book:  Is an instance of Book class
-  * date: Is an instance of a str
-  * royalties:  Is an instance of an int
-* Class Methods: contracts_by_date()- This method should return all contracts that have the same date as the date passed into the method
+Or:
 
-#### Step 6: Push feature branch and open a PR on GitHub
+```bash
+pipenv run pytest
+```
 
-#### Step 7: Merge to main
+---
 
-### Task 4: Document and Maintain
+## Models
 
-Best Practice documentation steps:
-* Add comments to the code to explain purpose and logic, clarifying intent and functionality of your code to other developers.
-* Update README text to reflect the functionality of the application following https://makeareadme.com. 
-  * Add screenshot of completed work included in Markdown in README.
-* Delete any stale branches on GitHub
-* Remove unnecessary/commented out code
-* If needed, update git ignore to remove sensitive data
+### Author
 
-## Important Submission Note
+Represents a writer.
 
-Before you submit your solution, you need to save your progress with git.
+#### Attributes:
 
-* Add your changes to the staging area by executing git add .
-* Create a commit by executing git commit -m "Your commit message"
-* Push your commits to GitHub by executing git push origin main
+`name` (string)
+
+#### Methods:
+
+`contracts()` → returns all contracts for the author
+`books()` → returns unique books the author has worked on
+`sign_contract(book, date, royalties)` → creates a contract
+
+---
+
+### Book
+
+Represents a book.
+
+#### Attributes:
+
+ `title` (string)
+
+#### Methods:
+
+ `contracts()` → returns all contracts for the book
+ `authors()` → returns unique authors of the book
+
+---
+
+### Contract
+
+Represents the join model connecting Authors and Books.
+
+#### Attributes:
+
+* `author` (Author instance)
+* `book` (Book instance)
+* `date` (string)
+* `royalties` (integer between 0–100)
+
+---
+
+## 🔗 Relationship Summary
+
+| Model    | Relationship                       |
+| -------- | ---------------------------------- |
+| Author   | has many Books through Contracts   |
+| Book     | has many Authors through Contracts |
+| Contract | belongs to Author and Book         |
+
+---
+
+## Example Usage
+
+```python
+from lib.many_to_many import Author, Book, Contract
+
+author1 = Author("Toni Morrison")
+author2 = Author("Alice Walker")
+
+book1 = Book("Collaborative Stories")
+
+contract1 = Contract(author1, book1, "2026-03-29", 15)
+contract2 = Contract(author2, book1, "2026-03-30", 12)
+
+print(author1.books())   # [book1]
+print(book1.authors())   # [author1, author2]
+```
+
+---
+
+## Validation Rules
+
+* Author name must be a non-empty string
+* Book title must be a non-empty string
+* Contract must:
+
+  * link valid Author and Book instances
+  * include a non-empty date string
+  * have royalties between 0 and 100
+
+---
+
+## Learning Goals
+
+By completing this lab, you will:
+
+* Understand **many-to-many relationships**
+* Use a **join class (Contract)** effectively
+* Practice **data validation and encapsulation**
+* Build scalable OOP models
+
+---
+
+## Author
+
+Built as part of a Python OOP lab to master relationships and data modeling.
+
+---
